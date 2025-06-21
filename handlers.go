@@ -7,7 +7,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"log"
 	"net/http"
 )
 
@@ -30,37 +29,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUsersHandler(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json")
-	//json.NewEncoder(w).Encode(users)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	//db, err := sql.Open("mysql", "usershop2:04051960@/dbshop2")
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer db.Close()
-	//
-	//if err := db.Ping(); err != nil {
-	//	log.Fatalln(err)
-	//}
-	//
-	//rows, err := db.Query("select el.ID as ID, NAME, PREVIEW_TEXT, FILE_NAME, SUBDIR  from dbshop2.b_iblock_element as el left join dbshop2.b_file as file ON el.PREVIEW_PICTURE=file.ID WHERE IBLOCK_ID=1")
-	//if err != nil {
-	//	fmt.Println("error in returning result")
-	//}
-	//defer rows.Close()
-	//news := []new{}
-	//
-	//for rows.Next() {
-	//	p := new{}
-	//	err := rows.Scan(&p.ID, &p.NAME, &p.PREVIEW_TEXT, &p.FILE_NAME, &p.SUBDIR)
-	//	if err != nil {
-	//		fmt.Println(err)
-	//		continue
-	//	}
-	//	news = append(news, p)
-	//}
-
 	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -73,15 +42,12 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	rows, err := db.Query("SELECT id, name, description, content, date_create, image FROM news")
+	rows, err := db.Query("SELECT id, name, description, content, date_create, image FROM news ORDER BY id DESC")
 	if err != nil {
 		fmt.Println("error in returning result")
 	}
 	defer rows.Close()
 	news := []newItem{}
-	var tom = person{"Tom", 23}
-	//bob := new{'id', 'name', 'description', 'content', 'date_create'}
-	fmt.Println("success1")
 	for rows.Next() {
 		p := newItem{}
 		err := rows.Scan(&p.Id, &p.Name, &p.Description, &p.Content, &p.Date_create, &p.Image)
@@ -92,26 +58,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 		news = append(news, p)
 	}
 
-	//for _, p := range news {
-	//	fmt.Println(p.id, p.name, p.description, p.content)
-	//}
-	//js := `{"status": "available", "environment": %q, "version": %q}`
-	//arr := [4]int{3, 2, 5, 4}
-
-	fmt.Println(news)
-	//longerArr := []int{5, 7, 1, 2, 0}
-	var myMap map[string]int
-
-	// Инициализируем map
-	myMap = make(map[string]int)
-	myMap["апельсин"] = 10
-	myMap["яблоко"] = 25
-	fmt.Println(tom)
 	w.Header().Set("Content-Type", "application/json")
-	//w.Write([]byte(js))
-	//fmt.Println(json.Marshal(news))
-	//fmt.Println(json.NewEncoder(w).Encode(news))
-	//json.NewEncoder(w).Encode(tom)
 	json.NewEncoder(w).Encode(news)
 }
 
@@ -119,39 +66,68 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	id := params["id"]
-	db, err := sql.Open("mysql", "usershop2:04051960@/dbshop2")
-
+	fmt.Println(id)
+	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-	if err := db.Ping(); err != nil {
-		log.Fatalln(err)
-	}
-
-	rows, err := db.Query("select ID, NAME from dbshop2.b_iblock_element WHERE IBLOCK_ID=1 AND ID=?", id)
+	err = db.Ping()
 	if err != nil {
-		fmt.Println("error in returning result")
+		panic(err)
 	}
-	defer rows.Close()
-	news := []newItem{}
 
-	for rows.Next() {
-		p := newItem{}
-		err := rows.Scan(&p.Id, &p.Name)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-
-		news = append(news, p)
+	row := db.QueryRow("SELECT id, name, description, content, date_create, image FROM news WHERE id = $1", id)
+	news := newItem{}
+	err2 := row.Scan(&news.Id, &news.Name, &news.Description, &news.Content, &news.Date_create, &news.Image)
+	if err2 == sql.ErrNoRows {
+		http.NotFound(w, r)
+		return
+	} else if err2 != nil {
+		http.Error(w, http.StatusText(500), 500)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(news)
 
 	//http.Error(w, "Пользователь не найден", http.StatusNotFound)
+}
+
+func contactsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := db.Query("SELECT id, address FROM contacts ORDER BY id ASC")
+	if err != nil {
+		fmt.Println("error in returning result")
+	}
+	defer rows.Close()
+	news := []contactItem{}
+	for rows.Next() {
+		p := contactItem{}
+		err := rows.Scan(&p.Id, &p.Address)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		news = append(news, p)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(news)
 }
 
 func updateUserHandler(w http.ResponseWriter, r *http.Request) {

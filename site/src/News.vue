@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const message = ref('Привет, мир!')
 const news = ref();
+const isDownload = ref(false)
 const updateMessage = () => {
   message.value = 'Сообщение обновлено!'
 }
@@ -12,6 +13,7 @@ onMounted(() => {
   axios.get('http://localhost:8081/users')
       .then(response => {
         news.value = response.data;
+        isDownload.value = true;
         console.log(response.data)
       })
       .catch(error => {
@@ -35,7 +37,7 @@ const getNewUrl = (NewId) => {
 </script>
 
 <template>
-  <div class="banner-2 space-y-10 pb-20" id="work">
+  <div class="banner-2 space-y-10 pb-20" id="work" v-if="isDownload">
     <h3 class="heading3 my-5">Новости</h3>
     <div class="card" v-for="(newItem, code) in news" :key="code">
       <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">

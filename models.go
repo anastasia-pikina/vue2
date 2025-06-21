@@ -15,6 +15,16 @@ type newItem struct {
 	Image       string `json:"image"`
 }
 
+type contactItem struct {
+	Id      string `json:"id"`
+	Address string `json:"address"`
+}
+
+type phone struct {
+	Id    string `json:"id"`
+	Value string `json:"value"`
+}
+
 type NullString struct {
 	String string
 	Valid  bool // Valid is true if String is not NULL

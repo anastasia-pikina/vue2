@@ -123,6 +123,7 @@ func main() {
 	r.HandleFunc("/users/{id}", getUserHandler).Methods("GET")
 	r.HandleFunc("/users/{id}", deleteUserHandler).Methods("DELETE")
 	r.HandleFunc("/images/{id}", imageHandler).Methods("GET")
+	r.HandleFunc("/contacts", contactsHandler).Methods("GET")
 
 	//handler := http.HandlerFunc(handleRequest)
 	//http.Handle("/image", handler)
