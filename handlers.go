@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"net/http"
+	"strings"
 )
 
 var users = []User{}
@@ -115,7 +116,8 @@ func contactsHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error in returning result")
 	}
 	defer rows.Close()
-	news := []contactItem{}
+	contacts := []contactItem{}
+	contactIds := []string{}
 	for rows.Next() {
 		p := contactItem{}
 		err := rows.Scan(&p.Id, &p.Address)
@@ -123,11 +125,46 @@ func contactsHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			continue
 		}
-		news = append(news, p)
+
+		if !contains(contactIds, p.Id) {
+			contactIds = append(contactIds, p.Id)
+		}
+
+		p.Phone = append(p.Phone, "60")
+		p.Phone = append(p.Phone, "70")
+
+		contacts = append(contacts, p)
 	}
 
+	contactIdsString := strings.Join(contactIds, ", ")
+	fmt.Println(contactIdsString)
+	//rows2, err2 := db.Query("SELECT id, addressid FROM phones WHERE addressid IN (?)", contactIdsString)
+	//if err2 != nil {
+	//	fmt.Println("error in returning result")
+	//}
+	//defer rows2.Close()
+
+	var myMap map[string][]string
+
+	// Инициализируем map
+	myMap = make(map[string][]string)
+	myMap["test"] = append(myMap["test"], "70")
+	myMap["test"] = append(myMap["test"], "80")
+
+	fmt.Println(myMap)
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(news)
+	json.NewEncoder(w).Encode(contacts)
+}
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
 }
 
 func updateUserHandler(w http.ResponseWriter, r *http.Request) {

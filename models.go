@@ -16,11 +16,17 @@ type newItem struct {
 }
 
 type contactItem struct {
-	Id      string `json:"id"`
-	Address string `json:"address"`
+	Id      string   `json:"id"`
+	Address string   `json:"address"`
+	Phone   []string `json:"phone"`
 }
 
-type phone struct {
+type phone2 struct {
+	Id    string `json:"id"`
+	Value string `json:"value"`
+}
+
+type email struct {
 	Id    string `json:"id"`
 	Value string `json:"value"`
 }

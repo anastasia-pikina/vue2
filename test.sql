@@ -1,1 +1,1 @@
-SELECT id FROM news
+SELECT id, addressid FROM phones WHERE addressid IN (1, 2)
