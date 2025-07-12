@@ -117,13 +117,14 @@ type Response struct {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler).Methods("GET")
-	r.HandleFunc("/users", createUserHandler).Methods("POST")
-	r.HandleFunc("/users", getUsersHandler).Methods("GET")
-	r.HandleFunc("/users/{id}", updateUserHandler).Methods("PUT")
-	r.HandleFunc("/users/{id}", getUserHandler).Methods("GET")
-	r.HandleFunc("/users/{id}", deleteUserHandler).Methods("DELETE")
+	r.Path("/news/").Queries("key", "{key}").HandlerFunc(getNewsHandler).Name("getNewsHandler")
+	r.Path("/news").HandlerFunc(getNewsHandler).Methods("GET")
+
+	//r.HandleFunc("/news/{limit:[0-9]+}", getNewsHandler).Methods("GET")
+	r.HandleFunc("/news/{id}", getNewHandler).Methods("GET")
 	r.HandleFunc("/images/{id}", imageHandler).Methods("GET")
 	r.HandleFunc("/contacts", contactsHandler).Methods("GET")
+	r.HandleFunc("/blocks/{code}", blocksHandler).Methods("GET")
 
 	//handler := http.HandlerFunc(handleRequest)
 	//http.Handle("/image", handler)

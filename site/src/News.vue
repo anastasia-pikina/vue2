@@ -10,7 +10,7 @@ const updateMessage = () => {
 }
 onMounted(() => {
   console.log('размонтирован!')
-  axios.get('http://localhost:8081/users')
+  axios.get('http://localhost:8081/news')
       .then(response => {
         news.value = response.data;
         isDownload.value = true;
@@ -33,7 +33,6 @@ const getNewUrl = (NewId) => {
   return ['/news', NewId].join('/') + '/';
 }
 
-// Нет необходимости в return, все переменные и функции автоматически доступны в шаблоне
 </script>
 
 <template>

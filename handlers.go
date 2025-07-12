@@ -6,9 +6,11 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
+	//	"gorm.io/gorm"
+	"log"
 	"net/http"
-	"strings"
 )
 
 var users = []User{}
@@ -29,8 +31,18 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func getUsersHandler(w http.ResponseWriter, r *http.Request) {
+func getNewsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	key := r.FormValue("key")
+	//var router = mux.NewRouter()
+
+	//u, errRouter := router.Get("getNewsHandler").URL("key", key)
+	//if errRouter != nil {
+	//	http.Error(w, errRouter.Error(), 500)
+	//	return
+	//}
+
+	fmt.Println(key)
 	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -42,11 +54,7 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 	rows, err := db.Query("SELECT id, name, description, content, date_create, image FROM news ORDER BY id DESC")
-	if err != nil {
-		fmt.Println("error in returning result")
-	}
 	defer rows.Close()
 	news := []newItem{}
 	for rows.Next() {
@@ -63,11 +71,10 @@ func getUsersHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(news)
 }
 
-func getUserHandler(w http.ResponseWriter, r *http.Request) {
+func getNewHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	id := params["id"]
-	fmt.Println(id)
 	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -130,31 +137,74 @@ func contactsHandler(w http.ResponseWriter, r *http.Request) {
 			contactIds = append(contactIds, p.Id)
 		}
 
-		p.Phone = append(p.Phone, "60")
-		p.Phone = append(p.Phone, "70")
-
 		contacts = append(contacts, p)
 	}
 
-	contactIdsString := strings.Join(contactIds, ", ")
-	fmt.Println(contactIdsString)
-	//rows2, err2 := db.Query("SELECT id, addressid FROM phones WHERE addressid IN (?)", contactIdsString)
-	//if err2 != nil {
-	//	fmt.Println("error in returning result")
-	//}
-	//defer rows2.Close()
+	rows2, err2 := db.Query("SELECT id, addressid, value FROM phones WHERE addressid = ANY($1)", pq.Array(contactIds))
+	if err2 != nil {
+		fmt.Println("error in returning result")
+	}
+	defer rows2.Close()
 
 	var myMap map[string][]string
 
 	// Инициализируем map
 	myMap = make(map[string][]string)
-	myMap["test"] = append(myMap["test"], "70")
-	myMap["test"] = append(myMap["test"], "80")
 
-	fmt.Println(myMap)
+	for rows2.Next() {
+		var id string
+		var addressid string
+		var value string
+		if err := rows2.Scan(&id, &addressid, &value); err != nil {
+			log.Fatal(err)
+		}
+		myMap[addressid] = append(myMap[addressid], value)
+	}
+
+	for i := len(contacts) - 1; i >= 0; i-- {
+		contacts[i].Phone = myMap[contacts[i].Id]
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(contacts)
+}
+
+func blocksHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	params := mux.Vars(r)
+	code := params["code"]
+	connStr := "postgres://user:password@localhost/dbname?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := db.Query("SELECT id, content, code FROM blocks WHERE code = $1", code)
+	if err != nil {
+		fmt.Println("error in returning result")
+	}
+	defer rows.Close()
+	blocks := []blockItem{}
+	for rows.Next() {
+		p := blockItem{}
+		err := rows.Scan(&p.Id, &p.Content, &p.Code)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		blocks = append(blocks, p)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(blocks)
 }
 
 func contains(s []string, str string) bool {

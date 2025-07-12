@@ -21,6 +21,12 @@ type contactItem struct {
 	Phone   []string `json:"phone"`
 }
 
+type blockItem struct {
+	Id      int    `json:"id"`
+	Content string `json:"content"`
+	Code    string `json:"code"`
+}
+
 type phone2 struct {
 	Id    string `json:"id"`
 	Value string `json:"value"`

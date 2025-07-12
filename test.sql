@@ -1,1 +1,1 @@
-SELECT id, addressid FROM phones WHERE addressid IN (1, 2)
+SELECT id, content FROM blocks WHERE code = 'contact_footer'

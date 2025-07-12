@@ -49,3 +49,17 @@
     height: 900px;
   }
 }
+
+.main_news {
+  color: #fff;
+  font-weight: 600;
+  font-size: 52px;
+}
+
+.is-disabled {
+  cursor: auto;
+}
+
+.is-disabled svg {
+  opacity: .7;
+}

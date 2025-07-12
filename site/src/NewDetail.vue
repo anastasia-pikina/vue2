@@ -12,7 +12,7 @@ const updateMessage = () => {
 onMounted(() => {
   const route = useRoute()
   const id = route.params.id
-  axios.get('http://localhost:8081/users/' + id)
+  axios.get('http://localhost:8081/news/' + id)
       .then(response => {
         newDetail.value = response.data;
         isDownload.value = true;
@@ -22,17 +22,6 @@ onMounted(() => {
         console.log(error);
       });
 })
-
-const getImage = (fileName, subDir) => {
-  if (!fileName.Valid) {
-    return '';
-  }
-
-  return ['http://shop2.local/upload/', subDir.String, fileName.String].join('/');
-}
-
-
-// Нет необходимости в return, все переменные и функции автоматически доступны в шаблоне
 </script>
 <template>
   <div class="banner-2 space-y-10 pb-20" id="work" v-if="isDownload">
