@@ -20,6 +20,11 @@ const router = createRouter({
 			component: NewsRouter,
 			children: [
 				{
+					path: 'page/:page?',
+					component: News,
+					name: 'news',
+				},
+				{
 					path: '',
 					component: News,
 				},

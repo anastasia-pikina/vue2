@@ -7,7 +7,7 @@ const isDownload = ref(false)
 const contacts = ref();
 
 onMounted(() => {
-  axios.get('http://localhost:8081/contacts')
+  axios.get('http://localhost:4000/contacts')
       .then(response => {
         contacts.value = response.data;
         isDownload.value = true;

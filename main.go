@@ -121,7 +121,7 @@ func main() {
 	r.Path("/news").HandlerFunc(getNewsHandler).Methods("GET")
 
 	//r.HandleFunc("/news/{limit:[0-9]+}", getNewsHandler).Methods("GET")
-	r.HandleFunc("/news/{id}", getNewHandler).Methods("GET")
+	//r.HandleFunc("/news/{id}", getNewHandler).Methods("GET")
 	r.HandleFunc("/images/{id}", imageHandler).Methods("GET")
 	r.HandleFunc("/contacts", contactsHandler).Methods("GET")
 	r.HandleFunc("/blocks/{code}", blocksHandler).Methods("GET")

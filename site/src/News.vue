@@ -1,37 +1,61 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, watch, computed} from 'vue'
 import axios from 'axios';
+import Pagination from "./pagination/Pagination.vue";
+import { useRoute } from 'vue-router'
 
-const message = ref('Привет, мир!')
 const news = ref();
 const isDownload = ref(false)
-const updateMessage = () => {
-  message.value = 'Сообщение обновлено!'
-}
+const currentPage = ref(1);
+const totalCount = ref(0);
+
 onMounted(() => {
-  console.log('размонтирован!')
-  axios.get('http://localhost:8081/news')
+  const route = useRoute()
+  if (route.params.page) {
+    currentPage.value = route.params.page;
+  }
+
+  axios.get(`http://localhost:4000/news?page=${currentPage.value}&limit=2`)
       .then(response => {
-        news.value = response.data;
+        news.value = response.data.list;
+        totalCount.value = response.data.count;
         isDownload.value = true;
-        console.log(response.data)
       })
       .catch(error => {
         console.log(error);
       });
 })
 
-const getImage = (fileName, subDir) => {
-  if (!fileName.Valid) {
-    return '';
-  }
-
-  return ['http://shop2.local/upload/', subDir.String, fileName.String].join('/');
-}
-
 const getNewUrl = (NewId) => {
   return ['/news', NewId].join('/') + '/';
 }
+
+const changePage = (pageNumber) => {
+  console.log(pageNumber)
+  if (pageNumber <= 0 || pageNumber > pageCount.value) {
+    return;
+  }
+
+  currentPage.value = pageNumber
+  axios.get(`http://localhost:4000/news?page=${pageNumber}&limit=2`)
+      .then(response => {
+        news.value = response.data.list;
+        isDownload.value = true;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+}
+
+const pageCount = computed(() => {
+  try {
+    return Math.ceil(totalCount.value / 2);
+  } catch (e) {
+    console.error(e.message);
+  }
+
+  return 0;
+});
 
 </script>
 
@@ -49,12 +73,13 @@ const getNewUrl = (NewId) => {
       <div v-if="newItem.image" class="card-image bg-green-100">
         <img
             class="object-cover w-full h-72 md:h-96"
-            :src="'http://localhost:8081' + newItem.image"
+            :src="'http://localhost:4000' + newItem.image"
         />
       </div>
     </div>
-
-
+    <Pagination :currentPage="currentPage" :pageCount="pageCount" :visiblePagesCount="11"
+                @changePage="changePage"
+    ></Pagination>
   </div>
 </template>
 

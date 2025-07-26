@@ -8,7 +8,7 @@ const maxNewIndex = ref(0)
 const currentNewIndex = ref(0);
 
 onMounted(() => {
-  axios.get('http://localhost:8081/news')
+  axios.get('http://localhost:4000/news')
       .then(response => {
         news.value = response.data;
         currentNew.value = news.value.find(x=>x!==undefined);
@@ -66,7 +66,7 @@ const isMinNew = computed(() => {
           >
             <img
                 class="absolute h-full w-full object-cover"
-                :src="'http://localhost:8081' + currentNew.image"
+                :src="'http://localhost:4000' + currentNew.image"
                 alt=""
             />
             <div class="absolute inset-0 bg-gray-700 opacity-75"></div>

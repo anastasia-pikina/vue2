@@ -6,13 +6,11 @@ import { useRoute } from 'vue-router'
 const message = ref('Привет, мир!')
 const isDownload = ref(false)
 const newDetail = ref();
-const updateMessage = () => {
-  message.value = 'Сообщение обновлено!'
-}
+
 onMounted(() => {
   const route = useRoute()
   const id = route.params.id
-  axios.get('http://localhost:8081/news/' + id)
+  axios.get('http://localhost:4000/news/' + id)
       .then(response => {
         newDetail.value = response.data;
         isDownload.value = true;
@@ -34,7 +32,7 @@ onMounted(() => {
       <div v-if="newDetail.image" class="card-image bg-green-100">
         <img
             class="object-cover w-full h-72 md:h-96"
-            :src="'http://localhost:8081' + newDetail.image"
+            :src="'http://localhost:4000' + newDetail.image"
         />
       </div>
     </div>

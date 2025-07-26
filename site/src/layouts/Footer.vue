@@ -6,12 +6,12 @@ const contentFooter = ref();
 const contentEmail = ref();
 
 onMounted(() => {
-  axios.get('http://localhost:8081/blocks/footer')
+  axios.get('http://localhost:4000/blocks/footer')
       .then(response => {
         contentFooter.value = response.data.find(x=>x!==undefined);
         console.log(contentFooter.value.content)
 
-        axios.get('http://localhost:8081/blocks/email')
+        axios.get('http://localhost:4000/blocks/email')
             .then(response => {
               contentEmail.value = response.data.find(x=>x!==undefined);
               isDownload.value = true;
