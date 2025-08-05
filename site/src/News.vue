@@ -31,7 +31,6 @@ const getNewUrl = (NewId) => {
 }
 
 const changePage = (pageNumber) => {
-  console.log(pageNumber)
   if (pageNumber <= 0 || pageNumber > pageCount.value) {
     return;
   }
@@ -64,7 +63,7 @@ const pageCount = computed(() => {
     <h3 class="heading3 my-5">Новости</h3>
     <div class="card" v-for="(newItem, code) in news" :key="code">
       <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
-        <h4 class="project-title item">{{newItem.name}}</h4>
+        <h4 class="project-title item">{{newItem.title}}</h4>
         <p class="font-work_sans pr-12" v-html="newItem.description"></p>
         <a class="text-sky-800 font-bold text-2xl tracking-wider" :href="getNewUrl(newItem.id)">
           Подробнее
@@ -77,7 +76,7 @@ const pageCount = computed(() => {
         />
       </div>
     </div>
-    <Pagination :currentPage="currentPage" :pageCount="pageCount" :visiblePagesCount="11"
+    <Pagination :currentPage="currentPage" :pageCount="pageCount" :visiblePagesCount="5"
                 @changePage="changePage"
     ></Pagination>
   </div>

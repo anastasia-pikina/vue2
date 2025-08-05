@@ -1,13 +1,16 @@
 <script setup>
-import { computed } from 'vue'
+import { computed} from 'vue'
 
 import PaginationPage from "./PaginationPage.vue";
+import './Pagination.css';
 
 const props = defineProps([
   'currentPage',
   'pageCount',
   'visiblePagesCount'
 ])
+
+const emit = defineEmits(['changePage'])
 
 const paginationPages = computed(() => {
 
@@ -102,7 +105,8 @@ const pageNextLink = computed(() => {
       currentPage = 1;
     }
 
-    let nextPage = currentPage + 1;
+    let nextPage = Number(currentPage) + 1;
+
     if (nextPage > props.pageCount) {
       nextPage = props.pageCount;
     }
@@ -120,31 +124,50 @@ const pageNextLink = computed(() => {
   return {};
 });
 
+const changePage = (pageNumber) => {
+  if (Number(pageNumber) === Number(props.currentPage)) {
+    return;
+  }
+
+  emit('changePage', pageNumber)
+}
+
 </script>
 
 <template>
-  <router-link :to="pagePrevLink"
-               @click="$emit('changePage', currentPage - 1)"
-               class="pages-nav">
-    предыдущая
-  </router-link>
-  <PaginationPage
-      v-for="(pageNumberView, pageNumber) in paginationPages" :key="pageNumber"
-      :class="{
-						'page-current':
-						pageNumber === currentPage
-					}"
-      :pageNumber="pageNumber"
-      :pageNumberView="pageNumberView"
-      class="page"
-      @changePage="$emit('changePage', pageNumber)"
-  />
-  <router-link :to="pageNextLink"
-               class="pages-nav"
-               @click="$emit('changePage', Number(currentPage) + 1)"
-  >
-    следующая
-  </router-link>
+  <div class="pagination">
+    <router-link :to="pagePrevLink"
+                 @click="$emit('changePage', currentPage - 1)"
+                 class="pages-nav"
+                 :class="{
+                  'disabled':
+                  1 === Number(props.currentPage)
+                }"
+    >
+      предыдущая
+    </router-link>
+    <PaginationPage
+        v-for="(pageNumberView, pageNumber) in paginationPages" :key="pageNumber"
+        :class="{
+              'page-current':
+              Number(pageNumber) === Number(props.currentPage)
+            }"
+        :pageNumber="pageNumber"
+        :pageNumberView="pageNumberView"
+        class="page"
+        @changePage="changePage"
+    />
+    <router-link :to="pageNextLink"
+                 class="pages-nav"
+                 @click="$emit('changePage', Number(currentPage) + 1)"
+                 :class="{
+                  'disabled':
+                  Number(props.pageCount) === Number(props.currentPage)
+                }"
+    >
+      следующая
+    </router-link>
+  </div>
 </template>
 
 <style scoped>

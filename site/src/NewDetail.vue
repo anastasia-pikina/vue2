@@ -26,7 +26,7 @@ onMounted(() => {
     <h3 class="heading3 my-5">Новости</h3>
     <div class="card">
       <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
-        <h4 class="project-title item">{{newDetail.name}}</h4>
+        <h4 class="project-title item">{{newDetail.title}}</h4>
         <p class="font-work_sans pr-12" v-html="newDetail.content"></p>
       </div>
       <div v-if="newDetail.image" class="card-image bg-green-100">

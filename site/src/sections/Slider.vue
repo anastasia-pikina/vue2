@@ -8,11 +8,11 @@ const maxNewIndex = ref(0)
 const currentNewIndex = ref(0);
 
 onMounted(() => {
-  axios.get('http://localhost:4000/news')
+  axios.get('http://localhost:4000/news?limit=20')
       .then(response => {
-        news.value = response.data;
+        news.value = response.data.list;
         currentNew.value = news.value.find(x=>x!==undefined);
-        maxNewIndex.value = response.data.length - 1;
+        maxNewIndex.value = news.value.length - 1;
         isDownload.value = true;
       })
       .catch(error => {
@@ -75,7 +75,7 @@ const isMinNew = computed(() => {
                 width="200"
                 height="120"
             >
-              {{currentNew.name}}
+              {{currentNew.title}}
             </div>
           </div>
           <div class="relative lg:w-7/12 bg-white">
