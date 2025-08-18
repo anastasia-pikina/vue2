@@ -20,6 +20,7 @@ func Init() *gorm.DB {
 	db.AutoMigrate(&models.Contact{})
 	db.AutoMigrate(&models.Phone{})
 	db.AutoMigrate(&models.New{})
+	db.AutoMigrate(&models.Block{})
 
 	return db
 }

@@ -18,12 +18,17 @@ func (h handler) GetNew(w http.ResponseWriter, r *http.Request) {
 	// Find book by Id
 	var new models.New
 
-	if result := h.DB.First(&new, id); result.Error != nil {
+	if result := h.DB.Where("id = ? AND is_active = ?", id, true).Limit(1).Find(&new); result.Error != nil {
 		fmt.Println(result.Error)
 	}
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(new)
+	if new.Id > 0 {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(new)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+
 }

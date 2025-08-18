@@ -8,7 +8,7 @@ const maxNewIndex = ref(0)
 const currentNewIndex = ref(0);
 
 onMounted(() => {
-  axios.get('http://localhost:4000/news?limit=20')
+  axios.get('http://localhost:4000/news?limit=10')
       .then(response => {
         news.value = response.data.list;
         currentNew.value = news.value.find(x=>x!==undefined);

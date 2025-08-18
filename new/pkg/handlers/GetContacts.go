@@ -10,11 +10,9 @@ import (
 func (h handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 	var contacts []models.Contact
 
-	if result := h.DB.Find(&contacts); result.Error != nil {
+	if result := h.DB.Where("is_active = ?", true).Find(&contacts); result.Error != nil {
 		fmt.Println(result.Error)
 	}
-
-	fmt.Println(contacts)
 	contactIds := []int{}
 
 	for i := len(contacts) - 1; i >= 0; i-- {
@@ -25,7 +23,7 @@ func (h handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 
 	var phones []models.Phone
 
-	h.DB.Where("addressid IN ?", contactIds).Find(&phones)
+	h.DB.Where("addressid IN ? AND is_active = ?", contactIds, true).Find(&phones)
 
 	var myMap map[int][]string
 
@@ -35,8 +33,6 @@ func (h handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 	for i := len(phones) - 1; i >= 0; i-- {
 		myMap[phones[i].Addressid] = append(myMap[phones[i].Addressid], phones[i].Value)
 	}
-
-	fmt.Println(myMap)
 
 	type result struct {
 		Id      int      `json:"id"`

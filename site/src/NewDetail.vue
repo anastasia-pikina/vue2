@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios';
 import { useRoute } from 'vue-router'
 
-const message = ref('Привет, мир!')
 const isDownload = ref(false)
 const newDetail = ref();
 
@@ -17,6 +16,7 @@ onMounted(() => {
         console.log(response.data)
       })
       .catch(error => {
+        isDownload.value = true;
         console.log(error);
       });
 })
@@ -25,18 +25,26 @@ onMounted(() => {
   <div class="banner-2 space-y-10 pb-20" id="work" v-if="isDownload">
     <h3 class="heading3 my-5">Новости</h3>
     <div class="card">
-      <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
-        <h4 class="project-title item">{{newDetail.title}}</h4>
-        <p class="font-work_sans pr-12" v-html="newDetail.content"></p>
-      </div>
-      <div v-if="newDetail.image" class="card-image bg-green-100">
-        <img
-            class="object-cover w-full h-72 md:h-96"
-            :src="'http://localhost:4000' + newDetail.image"
-        />
+      <template v-if="newDetail">
+        <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
+          <h4 class="project-title item">{{newDetail.title}}</h4>
+          <p class="font-work_sans pr-12" v-html="newDetail.content"></p>
+        </div>
+        <div v-if="newDetail.image" class="card-image bg-green-100">
+          <img
+              class="object-cover w-full h-72 md:h-96"
+              :src="'http://localhost:4000' + newDetail.image"
+          />
+        </div>
+      </template>
+      <div v-else class="new-not-found">
+        <p class="font-work_sans pr-12">Новость не найдена.</p>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+  .new-not-found {
+    padding: 15px;
+  }
 </style>
