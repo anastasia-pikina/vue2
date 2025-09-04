@@ -3,10 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"main/new/pkg/models"
 	"net/http"
 	"strconv"
-
-	"main/new/pkg/models"
 )
 
 func (h handler) GetAllNews(w http.ResponseWriter, r *http.Request) {

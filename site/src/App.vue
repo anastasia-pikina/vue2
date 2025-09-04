@@ -1,21 +1,9 @@
 <script setup>
-
-import Menu from './layouts/Header.vue';
-import Slider from "./sections/Slider.vue";
-import MainBanner from "./sections/MainBanner.vue";
-
+import Header from './layouts/Header.vue';
+import Footer from './layouts/Footer.vue';
 </script>
 <template>
-
-<Slider />
-<MainBanner />
+  <Header />
+  <router-view />
+  <Footer />
 </template>
-<script>
-  export default {
-    data() {
-      return {
-        showMenu: false,
-      }
-    },
-  }
-</script>

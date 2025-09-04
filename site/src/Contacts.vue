@@ -1,21 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios';
-import { useRoute } from 'vue-router'
+import {useMainStore} from './stores/mainStore';
+const store = useMainStore();
+const contacts = ref([]);
 
-const isDownload = ref(false)
-const contacts = ref();
-
-onMounted(() => {
-  axios.get('http://localhost:4000/contacts')
-      .then(response => {
-        contacts.value = response.data;
-        isDownload.value = true;
-      })
-      .catch(error => {
-        console.log(error);
-      });
-})
+onMounted(async () => {
+  contacts.value = await store.getData('/contacts') ?? [];
+});
 </script>
 
 <template>

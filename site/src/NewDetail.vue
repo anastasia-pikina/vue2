@@ -1,39 +1,52 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios';
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useMainStore } from './stores/mainStore';
+import { computed } from 'vue';
+import Loader from './sections/Loader.vue';
+const store = useMainStore();
+const newDetail = ref(null);
+const isDownload = ref(false);
 
-const isDownload = ref(false)
-const newDetail = ref();
-
-onMounted(() => {
-  const route = useRoute()
-  const id = route.params.id
-  axios.get('http://localhost:4000/news/' + id)
-      .then(response => {
-        newDetail.value = response.data;
-        isDownload.value = true;
-        console.log(response.data)
-      })
-      .catch(error => {
-        isDownload.value = true;
-        console.log(error);
-      });
+onMounted(async () => {
+  try {
+    const route = useRoute()
+    const id = route.params.id;
+    newDetail.value = await store.getData(`/news/${id}`);
+    isDownload.value = true;
+  } catch (error) {
+    return null;
+  }
 })
+
+const imageUrl = computed(() => {
+  try {
+    if (!newDetail.value || !newDetail.value.image) {
+      return null;
+    }
+
+    return `${store.api_url}${newDetail.value.image}`;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+})
+
 </script>
 <template>
-  <div class="banner-2 space-y-10 pb-20" id="work" v-if="isDownload">
+  <div class="banner-2 space-y-10 pb-20" id="work">
     <h3 class="heading3 my-5">Новости</h3>
-    <div class="card">
+    <Loader v-if="!isDownload" />
+    <div v-else class="card">
       <template v-if="newDetail">
         <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
           <h4 class="project-title item">{{newDetail.title}}</h4>
           <p class="font-work_sans pr-12" v-html="newDetail.content"></p>
         </div>
-        <div v-if="newDetail.image" class="card-image bg-green-100">
+        <div v-if="imageUrl" class="card-image bg-green-100">
           <img
               class="object-cover w-full h-72 md:h-96"
-              :src="'http://localhost:4000' + newDetail.image"
+              :src=imageUrl
           />
         </div>
       </template>

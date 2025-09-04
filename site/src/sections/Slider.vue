@@ -142,5 +142,9 @@ const isMinNew = computed(() => {
 </template>
 
 <style scoped>
-
+.main_news {
+  color: #fff;
+  font-weight: 600;
+  font-size: 42px;
+}
 </style>

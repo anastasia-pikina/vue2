@@ -1,19 +1,20 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import App2 from './App2.vue'
-import App from './App.vue'
-import News from './News.vue'
-import NewsRouter from './NewsRouter.vue'
-import Contacts from './Contacts.vue'
-import NewDetail from './NewDetail.vue'
-import './index.css'
-import VueSmoothScroll from 'vue3-smooth-scroll'
+import { createApp } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import Main from './Main.vue';
+import News from './News.vue';
+import NewsRouter from './NewsRouter.vue';
+import Contacts from './Contacts.vue';
+import NewDetail from './NewDetail.vue';
+import './index.css';
+import VueSmoothScroll from 'vue3-smooth-scroll';
 
 const router = createRouter({
 	routes: [
 		{
 			path: '/',
-			component: App
+			component: Main
 		},
 		{
 			path: '/news/',
@@ -42,7 +43,8 @@ const router = createRouter({
 	history: createWebHistory()
 })
 
-const app = createApp(App2)
+const app = createApp(App)
 app.use(router)
 app.use(VueSmoothScroll)
+app.use(createPinia());
 app.mount('#app')
