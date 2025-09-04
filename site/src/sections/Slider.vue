@@ -1,24 +1,24 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios';
-
-const news = ref();
-const isDownload = ref(false)
-const maxNewIndex = ref(0)
+import {useMainStore} from '../stores/mainStore';
+const store = useMainStore();
+const news = ref([]);
+const maxNewIndex = ref(0);
 const currentNewIndex = ref(0);
+const limit = 10;
 
-onMounted(() => {
-  axios.get('http://localhost:4000/news?limit=10')
-      .then(response => {
-        news.value = response.data.list;
-        currentNew.value = news.value.find(x=>x!==undefined);
-        maxNewIndex.value = news.value.length - 1;
-        isDownload.value = true;
-      })
-      .catch(error => {
-        console.log(error);
-      });
-})
+onMounted(async () => {
+  try {
+    const newsData = await store.getData(`/news?limit=${limit}`);
+    if (newsData) {
+      news.value = newsData.list ?? [];
+      currentNew.value = news.value.find(x=>x!==undefined);
+      maxNewIndex.value = news.value.length - 1;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 const currentNew = computed(() => {
   return news.value[currentNewIndex.value];
@@ -41,17 +41,30 @@ const prevNew = () => {
   }
 }
 
+const imageUrl = (newItem) => {
+  try {
+    if (!newItem || !newItem.image) {
+      return null;
+    }
+
+    return `${store.api_url}${newItem.image}`;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 const isMaxNew = computed(() => {
   return currentNewIndex.value === maxNewIndex.value;
-})
+});
 
 const isMinNew = computed(() => {
   return currentNewIndex.value === 0;
-})
+});
 </script>
 
 <template>
-  <div class="banner-1" id="testimonial" v-if="isDownload">
+  <div class="banner-1" id="testimonial" v-if="news.length > 0">
     <div class="space-y-4 grid place-items-center mt-5">
       <h3 class="heading3">Новости</h3>
       <p class="font-work_sans text-gray-600 font-semibold leading-relaxed">
@@ -64,9 +77,9 @@ const isMinNew = computed(() => {
           <div
               class="h-56 lg:h-auto lg:w-5/12 relative flex items-center justify-center"
           >
-            <img
+            <img v-if="imageUrl(currentNew)"
                 class="absolute h-full w-full object-cover"
-                :src="'http://localhost:4000' + currentNew.image"
+                :src=imageUrl(currentNew)
                 alt=""
             />
             <div class="absolute inset-0 bg-gray-700 opacity-75"></div>
@@ -90,8 +103,7 @@ const isMinNew = computed(() => {
             <div
                 class="relative py-12 lg:py-24 px-8 lg:px-16 text-gray-700 leading-relaxed"
             >
-              <p>{{currentNew.description}}
-              </p>
+              <p v-if="currentNew.description">{{currentNew.description}}</p>
               <p class="mt-6">
                 <a
                     :href="getNewUrl(currentNew.id)"

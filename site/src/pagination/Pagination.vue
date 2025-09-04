@@ -1,8 +1,8 @@
 <script setup>
-import { computed} from 'vue'
+import { computed} from 'vue';
 
-import PaginationPage from "./PaginationPage.vue";
-import './Pagination.css';
+import PaginationPage from './PaginationPage.vue';
+
 
 const props = defineProps([
   'currentPage',
@@ -138,7 +138,6 @@ const changePage = (pageNumber) => {
   <div class="pagination">
     <router-link :to="pagePrevLink"
                  @click="$emit('changePage', currentPage - 1)"
-                 class="pages-nav"
                  :class="{
                   'disabled':
                   1 === Number(props.currentPage)
@@ -158,7 +157,6 @@ const changePage = (pageNumber) => {
         @changePage="changePage"
     />
     <router-link :to="pageNextLink"
-                 class="pages-nav"
                  @click="$emit('changePage', Number(currentPage) + 1)"
                  :class="{
                   'disabled':
@@ -171,5 +169,10 @@ const changePage = (pageNumber) => {
 </template>
 
 <style scoped>
-
+  .pagination {
+    padding: 0 30px;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: center;
+  }
 </style>
