@@ -9,11 +9,11 @@
   >
     <div class="flex items-center justify-between">
       <div class="relative w-16 h-16">
-        <a href="/"><img
+        <router-link :to="{name: 'Main'}"><img
             class="rounded-full border border-gray-100 shadow-sm"
             src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=512&h=512&q=80"
             alt="user image"
-        /></a>
+        /></router-link>
       </div>
       <!-- Mobile menu button -->
       <div @click="showMenu = !showMenu" class="flex md:hidden">
@@ -35,11 +35,9 @@
         :class="showMenu ? 'flex' : 'hidden'"
         class="flex-col items-end mt-8 space-y-4 md:flex md:space-y-0 md:flex-row md:items-center md:space-x-10 md:mt-0"
     >
-      <li class="menu-button"><a href="/">Главная</a></li>
-      <li class="menu-button"><a href="/news/">Новости</a></li>
-      <li class="menu-button">
-        <a href="/contacts/">Контакты</a>
-      </li>
+      <li class="menu-button"><router-link :to="{name: 'Main'}">Главная</router-link></li>
+      <li class="menu-button"><router-link :to="{name: 'News'}">Новости</router-link></li>
+      <li class="menu-button"><router-link :to="{name: 'Contacts'}">Контакты</router-link></li>
     </ul>
   </nav>
   <!-- End Navbar -->

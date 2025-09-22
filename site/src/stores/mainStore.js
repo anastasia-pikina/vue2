@@ -24,5 +24,32 @@ export const useMainStore = defineStore('mainStore', {
                 return null;
             }
         },
+
+        getNewDetailUrl(newId) {
+            if (!newId) {
+                return {};
+            }
+
+            return {
+                name: 'NewDetail',
+                params: {
+                    id: newId
+                }
+            };
+        },
+
+        getNewListUrl(page) {
+            let result = {
+                name: 'NewsPage',
+            };
+
+            if (page) {
+                result.params = {
+                    page: page,
+                };
+            }
+
+            return result;
+        }
     },
 })

@@ -2,13 +2,16 @@
 import { computed} from 'vue';
 
 import PaginationPage from './PaginationPage.vue';
+import {useMainStore} from "../stores/mainStore";
 
 
 const props = defineProps([
   'currentPage',
   'pageCount',
   'visiblePagesCount'
-])
+]);
+
+const store = useMainStore();
 
 const emit = defineEmits(['changePage'])
 
@@ -85,12 +88,7 @@ const pagePrevLink = computed(() => {
         prevPage = 1;
       }
 
-      return {
-        name: 'news',
-        params: {
-          page: prevPage,
-        },
-      }
+      return store.getNewListUrl(prevPage);
     } catch (e) {
       console.error(e.message);
     }
@@ -111,12 +109,7 @@ const pageNextLink = computed(() => {
       nextPage = props.pageCount;
     }
 
-    return {
-      name: 'news',
-      params: {
-        page: nextPage,
-      },
-    }
+    return store.getNewListUrl(nextPage);
   } catch (e) {
     console.error(e.message);
   }
@@ -174,5 +167,11 @@ const changePage = (pageNumber) => {
     text-transform: uppercase;
     font-size: 12px;
     text-align: center;
+  }
+
+  a.disabled
+  {
+    color: #5c6470;
+    cursor: default;
   }
 </style>

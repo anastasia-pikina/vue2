@@ -23,10 +23,6 @@ onMounted( () => {
   }
 })
 
-const getNewUrl = (NewId) => {
-  return ['/news', NewId].join('/') + '/';
-}
-
 const changePage = (pageNumber) => {
   try {
     if (pageNumber <= 0 || pageNumber > pageCount.value) {
@@ -85,9 +81,7 @@ const imageUrl = (newItem) => {
         <div class="space-y-5 py-8 px-8 md:py-16 md:px-20 md:w-1/2">
           <h4 class="project-title item">{{newItem.title}}</h4>
           <p class="font-work_sans pr-12" v-html="newItem.description"></p>
-          <a class="text-sky-800 font-bold text-2xl tracking-wider" :href="getNewUrl(newItem.id)">
-            Подробнее
-          </a>
+          <router-link class="text-sky-800 font-bold text-2xl tracking-wider" :to="store.getNewDetailUrl(newItem.id)">Подробнее</router-link>
         </div>
         <div v-if="imageUrl(newItem)" class="card-image bg-green-100">
           <img

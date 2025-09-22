@@ -1,19 +1,17 @@
 <script setup>
 
 import { computed } from 'vue'
+import {useMainStore} from "../stores/mainStore";
 
 const props = defineProps([
   'pageNumber',
   'pageNumberView',
-])
+]);
+
+const store = useMainStore();
 
 const pageLink = computed(() => {
-  return {
-    name: 'news',
-    params: {
-      page: props.pageNumber,
-    },
-  }
+  return store.getNewListUrl(props.pageNumber);
 });
 </script>
 

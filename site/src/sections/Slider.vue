@@ -22,12 +22,7 @@ onMounted(async () => {
 
 const currentNew = computed(() => {
   return news.value[currentNewIndex.value];
-})
-
-
-const getNewUrl = (NewId) => {
-  return ['/news', NewId].join('/') + '/';
-}
+});
 
 const nextNew = () => {
   if (maxNewIndex.value > currentNewIndex.value) {
@@ -105,11 +100,11 @@ const isMinNew = computed(() => {
             >
               <p v-if="currentNew.description">{{currentNew.description}}</p>
               <p class="mt-6">
-                <a
-                    :href="getNewUrl(currentNew.id)"
+                <router-link
+                    :to="store.getNewDetailUrl(currentNew.id)"
                     class="font-medium text-indigo-600 hover:text-indigo-900"
                 >
-                  &rarr; Подробнее</a>
+                  &rarr; Подробнее</router-link>
               </p>
             </div>
           </div>
