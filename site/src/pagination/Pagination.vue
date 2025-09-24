@@ -117,20 +117,11 @@ const pageNextLink = computed(() => {
   return {};
 });
 
-const changePage = (pageNumber) => {
-  if (Number(pageNumber) === Number(props.currentPage)) {
-    return;
-  }
-
-  emit('changePage', pageNumber)
-}
-
 </script>
 
 <template>
   <div class="pagination">
     <router-link :to="pagePrevLink"
-                 @click="$emit('changePage', currentPage - 1)"
                  :class="{
                   'disabled':
                   1 === Number(props.currentPage)
@@ -147,10 +138,8 @@ const changePage = (pageNumber) => {
         :pageNumber="pageNumber"
         :pageNumberView="pageNumberView"
         class="page"
-        @changePage="changePage"
     />
     <router-link :to="pageNextLink"
-                 @click="$emit('changePage', Number(currentPage) + 1)"
                  :class="{
                   'disabled':
                   Number(props.pageCount) === Number(props.currentPage)

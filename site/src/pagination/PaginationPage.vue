@@ -17,7 +17,7 @@ const pageLink = computed(() => {
 
 <template>
 <span>
-		<router-link @click="$emit('changePage', pageNumber)" :to="pageLink">
+		<router-link :to="pageLink">
 			{{ pageNumberView }}
 		</router-link>
 	</span>

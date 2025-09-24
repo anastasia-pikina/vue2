@@ -3,6 +3,6 @@
 </script>
 <template>
   <transition name="fade">
-  <router-view />
-    </transition>
+      <router-view />
+  </transition>
 </template>

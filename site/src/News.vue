@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, computed} from 'vue';
+import {ref, onMounted, computed, watch} from 'vue';
 import Pagination from './pagination/Pagination.vue';
 import { useRoute } from 'vue-router';
 import Loader from './sections/Loader.vue';
@@ -10,10 +10,11 @@ const currentPage = ref(1);
 const totalCount = ref(0);
 const store = useMainStore();
 const limit = 5;
+const route = useRoute();
+const show = ref(true);
 
 onMounted( () => {
   try {
-    const route = useRoute()
     if (route.params.page) {
       currentPage.value = route.params.page;
     }
@@ -23,17 +24,12 @@ onMounted( () => {
   }
 })
 
-const changePage = (pageNumber) => {
-  try {
-    if (pageNumber <= 0 || pageNumber > pageCount.value) {
-      return;
-    }
-
-    currentPage.value = pageNumber;
-    getNews();
-  } catch (error) {
-    console.error(error);
-  }
+watch(route, () => fetchNewsByPage(route.params.page));
+const fetchNewsByPage = async (page) => {
+  currentPage.value = page;
+  show.value  = false;
+  await getNews();
+  show.value  = true;
 }
 
 const getNews = async () => {
@@ -73,7 +69,8 @@ const imageUrl = (newItem) => {
 </script>
 
 <template>
-  <div class="banner-2 space-y-10 pb-20" id="work">
+  <transition name="fade" mode="out-in">
+  <div v-if="show" class="banner-2 space-y-10 pb-20" id="work">
     <h3 class="heading3 my-5">Новости</h3>
     <Loader v-if="isDownloadProcess" />
     <template v-else>
@@ -91,10 +88,9 @@ const imageUrl = (newItem) => {
         </div>
       </div>
     </template>
-    <Pagination v-if="pageCount > 1" :currentPage="currentPage" :pageCount="pageCount" :visiblePagesCount="5"
-                @changePage="changePage"
-    ></Pagination>
+    <Pagination v-if="pageCount > 1" :currentPage="currentPage" :pageCount="pageCount" :visiblePagesCount="5"></Pagination>
   </div>
+    </transition>
 </template>
 
 <style scoped>
